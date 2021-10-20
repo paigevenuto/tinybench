@@ -20,6 +20,7 @@ readSpeed=$( dd if=/dev/zero of=/tmp/test1.img bs=1M count=256 oflag=dsync |& fo
 
 currentResult=$( echo "$(date),$cpuSpeed,$memSpeed,$writeSpeed,$readSpeed")
 
+touch tinybench.txt
 lastRuns=$( awk -F"," '/\//{print $0}' tinybench.txt | tail -n $runsKept | sed 's/ *$//g')
 
 printf "DATE,CPU,MEM,WRITE,READ\n$lastRuns\n$currentResult" | awk -F"," '{printf "%-30s %-10s %-10s %-10s %-10s \n", $1,$2,$3,$4,$5}' > tinybench.txt
