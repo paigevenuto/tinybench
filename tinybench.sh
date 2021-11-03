@@ -18,11 +18,13 @@ writeSpeed=$( dd if=/dev/zero of=/tmp/writeBench bs=1M count=256 conv=fdatasync 
 # syncs read after write to disk
 readSpeed=$( dd if=/dev/zero of=/tmp/test1.img bs=1M count=256 oflag=dsync |& formatSpeed)
 
-currentResult=$( echo "$(date),$cpuSpeed,$memSpeed,$writeSpeed,$readSpeed")
+pingSpeed=$( ping -c 4 'charter.com' | grep avg | sed "s/.* = //" | awk -F '/' '{print $2}' | sed 's/\..*/ mb/')
+
+currentResult=$( echo "$(date),$cpuSpeed,$memSpeed,$writeSpeed,$readSpeed,$pingSpeed")
 
 touch tinybench.txt
 lastRuns=$( awk -F"," '/\//{print $0}' tinybench.txt | tail -n $runsKept | sed 's/ *$//g')
 
-printf "DATE,CPU,MEM,WRITE,READ\n$lastRuns\n$currentResult" | awk -F"," '{printf "%-30s %-10s %-10s %-10s %-10s \n", $1,$2,$3,$4,$5}' > tinybench.txt
+printf "DATE,CPU,MEM,WRITE,READ,PING\n$lastRuns\n$currentResult" | awk -F"," '{printf "%-30s %-10s %-10s %-10s %-10s %-10s \n", $1,$2,$3,$4,$5,$6}' > tinybench.txt
 
 cat tinybench.txt
